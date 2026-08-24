@@ -68,39 +68,25 @@ func CarregarTodosClientes(db *pgxpool.Pool) ([]Cliente, error){
 	return clientes, nil
 }
 
-func CarregarClientePeloId(db *pgxpool.Pool, idCliente int) ([]Cliente, error){
+func CarregarClientePeloId(db *pgxpool.Pool, idCliente int) (Cliente, error){
+	
+	var cliente Cliente
+	
 	sql := `
 		SELECT id, nome, email, telefone
 		FROM clientes 
-		WHERE id = :idCliente
+		WHERE id = $1
 	`
+	err := db.QueryRow(
+		context.Background(),
+		sql,
+		idCliente,
+	).Scan(
+		&cliente.Id,
+		&cliente.Nome,
+		&cliente.Email,
+		&cliente.Telefone,
+	)
 
-	linhas, err := db.Query(context.Background(), sql)
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer linhas.Close()
-
-	clientes := []Cliente {}
-
-	for linhas.Next() {
-		var cliente Cliente
-
-		err := linhas.Scan(
-			&cliente.Id,
-			&cliente.Nome,
-			&cliente.Email,
-			&cliente.Telefone,
-		)
-
-		if err != nil {
-			return nil, err
-		}
-
-		clientes = append(clientes, cliente)
-	}
-
-	return clientes, nil
+	return cliente, err
 }

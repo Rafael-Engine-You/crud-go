@@ -27,18 +27,19 @@ func main() {
 
 	// err = cli.CadastrarCliente(db, cliente)
 
-	clientes, err := cli.CarregarTodosClientes(db)
-
+	cliente, err := cli.CarregarClientePeloId(db, 1)
 	if err != nil {
 		log.Fatal("Erro ao conectar ", err )
 	}
 
-	for _, cliente := range clientes  {
-		fmt.Println(
-			cliente.Id,
-			cliente.Nome,
-			cliente.Email,
-			cliente.Telefone,
-		)
-	}
+	fmt.Printf("%d - %s - %s - %s\n", cliente.Id, cliente.Nome, cliente.Email, cliente.Telefone)
+
+	// for _, cliente := range clientes  {
+	// 	fmt.Println(
+	// 		cliente.Id,
+	// 		cliente.Nome,
+	// 		cliente.Email,
+	// 		cliente.Telefone,
+	// 	)
+	// }
 }	
