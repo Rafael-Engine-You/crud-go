@@ -19,14 +19,21 @@ func main() {
 
 	defer db.Close()
 
-	categoria := p.Categoria {
-		Nome: "Tecnológia",
-	}
+	// categoria := p.Categoria {
+	// 	Nome: "Telecomunicação",
+	// }
 
-	err = p.AddCategoria(db, categoria)
-	
+	// err = p.AddCategoria(db, categoria)
+
+	categorias, err := p.CarregarTodasCategorias(db)	
+
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("Produto cadastrado com sucesso!")
+
+	for _, categoria := range categorias {
+		fmt.Printf("%d - %s\n", categoria.Id, categoria.Nome)
+	} 
+
+	
 }	
