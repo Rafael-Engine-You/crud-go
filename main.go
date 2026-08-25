@@ -19,20 +19,29 @@ func main() {
 
 	defer db.Close()
 
-	// categoria := p.Categoria {
-	// 	Nome: "Telecomunicação",
-	// }
-
-	// err = p.AddCategoria(db, categoria)
-
-	categorias, err := p.CarregarTodasCategorias(db)	
+	err = p.AddProduto(
+		db, 
+		"Monitor DEll S272 22 polegadas", 
+		99.9,
+		p.Categoria{
+			Id: 2,
+		},
+	)
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	for _, categoria := range categorias {
-		fmt.Printf("%d - %s\n", categoria.Id, categoria.Nome)
+	fmt.Println("Produto cadastrado!") 
+
+	produtos, err := p.ListarProduto(db)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, produto := range produtos {
+		fmt.Printf("%d - %s - %s\n", produto.Id, produto.Nome, produto.Categoria.Nome)
 	} 
 
 	
