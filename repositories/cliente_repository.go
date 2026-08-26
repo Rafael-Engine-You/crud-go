@@ -1,19 +1,16 @@
-package clientes
+package repositories
 
 import (
 	"context"
+	"crud-go/models"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type Cliente struct {
-	Id int
-	Nome string
-	Email string
-	Telefone string
+type ClienteRepository struct {
+	Db *pgxpool.Pool
 }
 
-// Funcionalidades
-func CadastrarCliente(db *pgxpool.Pool, cliente Cliente) error {
+func (c ClienteRepository) CadastrarCliente(cliente Cliente) error {
 
 	sql := `
 		INSERT INTO clientes
@@ -32,12 +29,11 @@ func CadastrarCliente(db *pgxpool.Pool, cliente Cliente) error {
 	return err
 }
 
-func CarregarTodosClientes(db *pgxpool.Pool) ([]Cliente, error){
+func (c ClienteRepository) CarregarTodosClientes(db *pgxpool.Pool) ([]Cliente, error){
 	sql := `
 		SELECT id, nome, email, telefone
 		FROM clientes
 	`
-
 	linhas, err := db.Query(context.Background(), sql)
 
 	if err != nil {
@@ -46,10 +42,10 @@ func CarregarTodosClientes(db *pgxpool.Pool) ([]Cliente, error){
 
 	defer linhas.Close()
 
-	clientes := []Cliente {}
+	clientes := []models.Cliente {}
 
 	for linhas.Next() {
-		var cliente Cliente
+		var cliente models.Cliente
 
 		err := linhas.Scan(
 			&cliente.Id,
@@ -68,9 +64,9 @@ func CarregarTodosClientes(db *pgxpool.Pool) ([]Cliente, error){
 	return clientes, nil
 }
 
-func CarregarClientePeloId(db *pgxpool.Pool, idCliente int) (Cliente, error){
+func (c ClienteRepository) func CarregarClientePeloId(idCliente int) (Cliente, error){
 	
-	var cliente Cliente
+	var cliente models.Cliente
 	
 	sql := `
 		SELECT id, nome, email, telefone
