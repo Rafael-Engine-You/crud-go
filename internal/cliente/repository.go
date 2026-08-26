@@ -10,7 +10,7 @@ type ClienteRepository struct {
 	Db *pgxpool.Pool
 }
 
-func (c ClienteRepository) CadastrarCliente(cliente Cliente) error {
+func (c ClienteRepository) RegistrarCliente(cliente Cliente) error {
 
 	sql := `
 		INSERT INTO clientes
