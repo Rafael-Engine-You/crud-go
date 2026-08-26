@@ -1,16 +1,21 @@
-package repositories
+package cliente
 
 import (
 	"context"
-	"crud-go/models"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type ClienteRepository struct {
-	Db *pgxpool.Pool
+type Repository struct {
+	db *pgxpool.Pool
 }
 
-func (c ClienteRepository) RegistrarCliente(cliente Cliente) error {
+func NewRepository(db *pgxpool.Pool) *Repository {
+	return &Repository{
+		db: db
+	}
+}
+
+func (r Repository) RegistrarCliente(cliente Cliente) error {
 
 	sql := `
 		INSERT INTO clientes
@@ -18,7 +23,7 @@ func (c ClienteRepository) RegistrarCliente(cliente Cliente) error {
 		VALUES ($1, $2, $3)
 		RETURNING id
 	`
-	_, err := db.Exec(
+	_, err := r.db.Exec(
 		context.Background(),
 		sql,
 		cliente.Nome,
@@ -29,12 +34,12 @@ func (c ClienteRepository) RegistrarCliente(cliente Cliente) error {
 	return err
 }
 
-func (c ClienteRepository) CarregarTodosClientes(db *pgxpool.Pool) ([]Cliente, error){
+func (r Repository) CarregarTodosClientes(db *pgxpool.Pool) ([]Cliente, error){
 	sql := `
 		SELECT id, nome, email, telefone
 		FROM clientes
 	`
-	linhas, err := db.Query(context.Background(), sql)
+	linhas, err := r.db.Query(context.Background(), sql)
 
 	if err != nil {
 		return nil, err
@@ -64,7 +69,7 @@ func (c ClienteRepository) CarregarTodosClientes(db *pgxpool.Pool) ([]Cliente, e
 	return clientes, nil
 }
 
-func (c ClienteRepository) func CarregarClientePeloId(idCliente int) (Cliente, error){
+func (r Repository) CarregarClientePeloId(idCliente int) (Cliente, error){
 	
 	var cliente models.Cliente
 	
@@ -73,7 +78,7 @@ func (c ClienteRepository) func CarregarClientePeloId(idCliente int) (Cliente, e
 		FROM clientes 
 		WHERE id = $1
 	`
-	err := db.QueryRow(
+	err := r.db.QueryRow(
 		context.Background(),
 		sql,
 		idCliente,
