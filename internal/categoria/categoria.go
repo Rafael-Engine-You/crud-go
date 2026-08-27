@@ -1,12 +1,12 @@
-package produtos
+package categoria
 
 import (
 	"context"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func AddCategoria(db *pgxpool.Pool, categoria Categoria) error {
-
 	sql := `
 		INSERT INTO categorias(nome) VALUES ($1)
 	`
@@ -24,27 +24,22 @@ func CarregarTodasCategorias(db *pgxpool.Pool) ([]Categoria, error) {
 	`
 
 	linhas, err := db.Query(context.Background(), sql)
-
 	if err != nil {
 		return nil, err
 	}
-
 	defer linhas.Close()
 
-	categorias := []Categoria {}
+	categorias := []Categoria{}
 
 	for linhas.Next() {
 		var categoria Categoria
-
 		err := linhas.Scan(
 			&categoria.Id,
 			&categoria.Nome,
 		)
-
 		if err != nil {
 			return nil, err
-		} 
-
+		}
 		categorias = append(categorias, categoria)
 	}
 
@@ -53,9 +48,8 @@ func CarregarTodasCategorias(db *pgxpool.Pool) ([]Categoria, error) {
 
 func AtualizarCategoria(db *pgxpool.Pool, novoNome string, idCategoria int) error {
 	sql := `
-		UPDATE categorias SET nome = $1 WHERE
-		id = $2 
-	` 
+		UPDATE categorias SET nome = $1 WHERE id = $2
+	`
 	_, err := db.Exec(
 		context.Background(),
 		sql,
@@ -66,9 +60,9 @@ func AtualizarCategoria(db *pgxpool.Pool, novoNome string, idCategoria int) erro
 	return err
 }
 
-func BuscarCategoriarPeloId(db *pgxpool.Pool,idCategoria int)(Categoria, error) {
+func BuscarCategoriarPeloId(db *pgxpool.Pool, idCategoria int) (Categoria, error) {
 	sql := `
-		SELECT id, nome WHERE id = $1
+		SELECT id, nome FROM categorias WHERE id = $1
 	`
 	var categoria Categoria
 
@@ -81,13 +75,13 @@ func BuscarCategoriarPeloId(db *pgxpool.Pool,idCategoria int)(Categoria, error) 
 		&categoria.Nome,
 	)
 
-	return categoria, err 
+	return categoria, err
 }
 
 func RemoverCategoria(db *pgxpool.Pool, idCategoria int) error {
 	sql := `
-		DELETE FROM categorias WHERE id = $ 
-	` 
+		DELETE FROM categorias WHERE id = $1
+	`
 	_, err := db.Exec(
 		context.Background(),
 		sql,

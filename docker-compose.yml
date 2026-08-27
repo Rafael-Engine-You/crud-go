@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 102030
+      POSTGRES_DB: cruddb
+    ports:
+      - "5433:5432" # <- Corrigido para mapear a 5433 da máquina para a 5432 do Postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts.sql:/docker-entrypoint-initdb.d/init.sql # <- Já injetando o seu script da raiz!
+
+  api:
+    build: .
+    container_name: crud_api
+    ports:
+      - "8081:8081"
+    environment:
+      - DATABASE_URL=postgres://postgres:102030@db:5432/cruddb?sslmode=disable
+      - JWT_SECRET=2d8d596a0b97569f9226a8c33ed9c6dbc8d88120
+    depends_on:
+      - db
+
+volumes:
+  pgdata:

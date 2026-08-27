@@ -1,6 +1,6 @@
-
+package categoria
 
 type Categoria struct {
-	Id int
+	Id   int
 	Nome string
 }
